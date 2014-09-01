@@ -1,0 +1,30 @@
+extends ./index.jade
+
+block content
+  .block-panel
+    h2.block-panel-heading Room #312
+    .row.message-input
+      .col-lg-12
+        .input-group
+          span.input-group-btn
+            button.btn.btn-default(type='button') Send
+          input.form-control(type='text')
+    .panel.panel-default
+      .panel-body.chat-body
+        span.message
+          span.user(style='color: #0A6') User#1
+          | : Hello.
+        span.message
+          span.user(style='color: #A00') User#2
+          | : Hi!
+        span.message
+          span.user(style='color: #06F') Alien
+          | : Greatings, earthlings! I come in peace. Klaatu barada nikto. Here is my
+          a(href='#') gift
+          | to humanity
+        span.message
+          span.user(style='color: #A00') User#2
+          | : Wow!
+        span.message
+          span.user(style='color: #0A6') User#1
+          | : Radical, dude!

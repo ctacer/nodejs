@@ -1,0 +1,17 @@
+extends ./index.jade
+
+block content
+  .block-panel
+    .row
+      .col-lg-12
+        .input-group
+          span.input-group-btn
+            button.btn.btn-default(type='button') Create room
+          input.form-control(type='text')
+    h1 Available rooms
+    .list-group
+      a.list-group-item.active(href='#') Room #1
+      a.list-group-item(href='#') Room #2
+      a.list-group-item(href='#') Test room
+      a.list-group-item(href='#') Stupid room
+      a.list-group-item(href='#') Support room

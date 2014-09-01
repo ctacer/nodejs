@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-trainig",
+  "version": "0.0.1",
+  "description": "Node js training app",
+  "dependencies": {
+    "express": "*",
+    "body-parser": "*",
+    "async": "*",
+    "socket.io": "*",
+    "jade": "*"
+  },
+  "scripts": {
+    "postinstall": "bower install",
+    "prestart": "npm install",
+    "start": "node app.js"
+  }
+}
