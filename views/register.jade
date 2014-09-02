@@ -1,8 +1,8 @@
 extends ./index.jade
 
 block content
-  form.block-panel
+  form.block-panel(action="/user/register", method="post")
     h2.block-panel-heading Register new account
-    input.form-control.credentials(type='text', placeholder='Email address', required='', autofocus='')
-    input.form-control.credentials(type='password', placeholder='Password', required='')
+    input.form-control.credentials(type='text', placeholder='login', name='login', required='', autofocus='')
+    input.form-control.credentials(type='password', placeholder='Password', name='password', required='')
     button.btn.btn-lg.btn-primary.btn-block(type='submit') Register

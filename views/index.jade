@@ -12,9 +12,7 @@ html
     // Bootstrap core CSS
     link(href="css/bootstrap.min.css", rel="stylesheet")
     link(href="css/main.css", rel="stylesheet")
-    
-    style
-      [touch-action="none"]{ -ms-touch-action: none; touch-action: none; }[touch-action="pan-x"]{ -ms-touch-action: pan-x; touch-action: pan-x; }[touch-action="pan-y"]{ -ms-touch-action: pan-y; touch-action: pan-y; }[touch-action="scroll"],[touch-action="pan-x pan-y"],[touch-action="pan-y pan-x"]{ -ms-touch-action: pan-x pan-y; touch-action: pan-x pan-y; }
+    link(href="css/touch.css", rel="stylesheet")
     
     // if lt IE 9
       script(src="../../docs-assets/js/ie8-responsive-file-warning.js)
@@ -23,8 +21,20 @@ html
       script(src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js")
       script(src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js")
   
-  body    
-    block content
+  body
+    if user && user.login
+      header#top.navbar.navbar-static-top.bs-docs-nav(role='banner')
+        div.container
+          nav.collapse.navbar-collapse.bs-navbar-collapse(role='navigation')
+            ul.nav.navbar-nav.navbar-right            
+              li
+                a(href="#")= user.login
+              li
+                a(href="/user/logout") sign out
+
+    .main-container
+      block content
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

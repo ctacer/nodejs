@@ -5,9 +5,14 @@
   "dependencies": {
     "express": "*",
     "body-parser": "*",
+    "express-session": "*",
     "async": "*",
     "socket.io": "*",
-    "jade": "*"
+    "jade": "*",
+    "mongoose": "*",
+    "winston": "*",
+    "passport": "*",
+    "passport-local": "*"
   },
   "scripts": {
     "postinstall": "bower install",

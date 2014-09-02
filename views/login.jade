@@ -1,11 +1,14 @@
 extends ./index.jade
 
-block content
-  form.block-panel
+block content  
+  form.block-panel(action="/user/login", method="post")
     h2.block-panel-heading Sign in
-    input.form-control.credentials(type='text', placeholder='Email address', required='', autofocus='')
-    input.form-control.credentials(type='password', placeholder='Password', required='')
+    input.form-control.credentials(type='text', placeholder='login', name='login', required='', autofocus='')
+    input.form-control.credentials(type='password', placeholder='Password', name='password', required='')
     label.checkbox
       input(type='checkbox', value='remember-me')
       | Remember me
     button.btn.btn-lg.btn-primary.btn-block(type='submit') Login
+    hr
+    .text-center
+      a(href="/register") create account

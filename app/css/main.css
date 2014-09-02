@@ -1,8 +1,12 @@
 body {
-  background-color: #eee;
+}
+
+.main-container {
+  padding: 30px;
 }
 
 .block-panel {
+  margin: auto;
   max-width: 330px;
   padding: 15px;
 }
