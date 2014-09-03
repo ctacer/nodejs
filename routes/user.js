@@ -18,7 +18,7 @@ module.exports.register = function(req, res){
         "password" : req.body.password
     };
 
-    global.modules.db.User.save(newUser, function (error) {
+    global.modules.db.user.save(newUser, function (error) {
         if (error) {
             logger.error(error.message);
             res.redirect('/register');
@@ -27,9 +27,6 @@ module.exports.register = function(req, res){
             res.redirect('/login');
         }
     });
-    
-    // res.render('test', { title : 'Test', user: req.user, data: JSON.stringify(req.body) });
-    // res.send('ok');
 };
 
 /**

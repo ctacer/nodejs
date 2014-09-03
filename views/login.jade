@@ -5,7 +5,7 @@ block content
     h2.block-panel-heading Sign in
     input.form-control.credentials(type='text', placeholder='login', name='login', required='', autofocus='')
     input.form-control.credentials(type='password', placeholder='Password', name='password', required='')
-    label.checkbox
+    label.checkbox(style="display: none;")
       input(type='checkbox', value='remember-me')
       | Remember me
     button.btn.btn-lg.btn-primary.btn-block(type='submit') Login

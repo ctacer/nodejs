@@ -14,4 +14,5 @@ db.once('open', function callback () {
 });
 
 
-module.exports.User = require('./models/User.js');
+module.exports.user = require('./models/user.js') (mongoose);
+module.exports.room = require('./models/room.js') (mongoose);

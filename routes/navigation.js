@@ -18,7 +18,7 @@ module.exports.index = function(req, res) {
 };
 
 module.exports.test = function (req, res) {
-  global.modules.db.User.find({ login: 'user1' }, function (result) {
+  global.modules.db.user.find({ login: 'user1' }, function (result) {
     res.render('test', { title : 'Test', user: req.user, data: result });
   });
 };

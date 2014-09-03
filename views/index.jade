@@ -10,7 +10,8 @@ html
     title= title
 
     // Bootstrap core CSS
-    link(href="css/bootstrap.min.css", rel="stylesheet")
+    link(href="bower-components/bootstrap/dist/css/bootstrap.min.css", rel="stylesheet")
+      
     link(href="css/main.css", rel="stylesheet")
     link(href="css/touch.css", rel="stylesheet")
     
@@ -35,7 +36,6 @@ html
     .main-container
       block content
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    script(src="bower-components/jquery/dist/jquery.min.js")
+    script(src="bower-components/bootstrap/dist/js/bootstrap.min.js")
+    block scripts

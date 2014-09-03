@@ -6,8 +6,8 @@ block content
       .col-lg-12
         .input-group
           span.input-group-btn
-            button.btn.btn-default(type='button') Create room
-          input.form-control(type='text')
+            button#create-room.btn.btn-default(type='button') Create room
+          input#room-name.form-control(type='text')
     h1 Available rooms
     .list-group
       a.list-group-item.active(href='#') Room #1
@@ -15,3 +15,7 @@ block content
       a.list-group-item(href='#') Test room
       a.list-group-item(href='#') Stupid room
       a.list-group-item(href='#') Support room
+
+
+block scripts
+  script(src="js/lobby.js")

@@ -1,57 +1,35 @@
 
 
-//User.js
+//user.js
 
 var logger = require(global.config.logger.dist)(module);
 
-var mongoose = require('mongoose');
+module.exports = function (mongoose) {
 
-var UserSchema = mongoose.Schema({
-  login: String,
-  password: String
-});
+  var exports = {};
 
-/**
- * function will return a static user data 
- * without access to db functionality
- */
-UserSchema.methods.map = function () {
-  return {
-    login: this.login,
-    password: this.password
-  };
-};
+  var UserSchema = mongoose.Schema({
+    login: String,
+    password: String
+  });
 
-var User = mongoose.model('User', UserSchema);
-
-
-
-module.exports.find = function (user, cb) {
-  var args = [];
-  if (user && typeof user == 'object' && user.login) {
-    args.push(user);
-  }
-  else if (typeof user == 'function') {
-    cb = user;
-  }
-  if (!cb || typeof cb != 'function') {
-    cb = function () {};
-  }
-
-  var callback = function (error, users) {
-    if (error) { 
-      logger.error(error);
-      return cb();
-    }
-
-    cb(users);
+  /**
+   * function will return a static user data 
+   * without access to db functionality
+   */
+  UserSchema.methods.map = function () {
+    return {
+      login: this.login,
+      password: this.password
+    };
   };
 
-  args.push(callback);
-  User.find.apply(User, args);
-};
+  var User = mongoose.model('User', UserSchema);
 
-module.exports.save = function (userData, cb) {
-  var user = new User(userData);
-  user.save(cb);
+  exports.mea = function () {
+    logger.log('mea');
+  };
+
+  exports.__proto__ = require('./model-proto') (User, logger);
+  return exports;
 };
