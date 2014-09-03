@@ -2,4 +2,6 @@ extends ./index.jade
 
 block content
   .content-block
-    h6= data
+    - for (var i = 0; i < data.length; ++i) {
+      div= data[i]
+    - }

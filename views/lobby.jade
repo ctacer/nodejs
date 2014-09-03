@@ -9,12 +9,15 @@ block content
             button#create-room.btn.btn-default(type='button') Create room
           input#room-name.form-control(type='text')
     h1 Available rooms
-    .list-group
-      a.list-group-item.active(href='#') Room #1
-      a.list-group-item(href='#') Room #2
-      a.list-group-item(href='#') Test room
-      a.list-group-item(href='#') Stupid room
-      a.list-group-item(href='#') Support room
+    #room-list.list-group
+      - for (var i = 0; i < rooms.length; i ++) {
+        a.list-group-item(href='#')= rooms[i].name
+      - }
+      //- a.list-group-item.active(href='#') Room #1
+      //- a.list-group-item(href='#') Room #2
+      //- a.list-group-item(href='#') Test room
+      //- a.list-group-item(href='#') Stupid room
+      //- a.list-group-item(href='#') Support room
 
 
 block scripts

@@ -26,10 +26,6 @@ module.exports = function (mongoose) {
 
   var User = mongoose.model('User', UserSchema);
 
-  exports.mea = function () {
-    logger.log('mea');
-  };
-
   exports.__proto__ = require('./model-proto') (User, logger);
   return exports;
 };

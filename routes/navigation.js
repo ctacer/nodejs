@@ -17,14 +17,31 @@ module.exports.index = function(req, res) {
   }  
 };
 
-module.exports.test = function (req, res) {
-  global.modules.db.user.find({ login: 'user1' }, function (result) {
-    res.render('test', { title : 'Test', user: req.user, data: result });
+module.exports.testUser = function (req, res) {
+  global.modules.db.user.find(function (result) {
+    res.render('test', { title : 'Test Users', user: req.user, data: result });
+  });
+};
+
+module.exports.testRoom = function (req, res) {
+  global.modules.db.room.find(function (result) {
+    res.render('test', { title : 'Test Rooms', user: req.user, data: result });
+  });
+};
+
+module.exports.removeRooms = function (req, res) {
+  global.modules.db.room.find(function (result) {
+    for (var i = 0; i < result.length; i++) {
+      result[i].remove();
+    };
+    res.redirect('/test/room');
   });
 };
 
 module.exports.lobby = function(req, res) {
-  res.render('lobby', { title : 'Lobby', user: req.user });
+  global.modules.db.room.find(function (result) {
+    res.render('lobby', { title : 'Lobby', user: req.user, rooms: result });
+  });
 };
 
 module.exports.login = function(req, res) {
