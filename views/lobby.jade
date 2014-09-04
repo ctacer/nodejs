@@ -11,7 +11,7 @@ block content
     h1 Available rooms
     #room-list.list-group
       - for (var i = 0; i < rooms.length; i ++) {
-        a.list-group-item(href='#')= rooms[i].name
+        a.list-group-item(href='/room?name=' + encodeURIComponent(rooms[i].name))= rooms[i].name
       - }
       //- a.list-group-item.active(href='#') Room #1
       //- a.list-group-item(href='#') Room #2

@@ -2,29 +2,39 @@ extends ./index.jade
 
 block content
   .block-panel
-    h2.block-panel-heading Room #312
+    h2.block-panel-heading= room.name
     .row.message-input
       .col-lg-12
         .input-group
           span.input-group-btn
-            button.btn.btn-default(type='button') Send
-          input.form-control(type='text')
+            button#create-message.btn.btn-default(type='button') Send
+          input#message-text.form-control(type='text')
     .panel.panel-default
-      .panel-body.chat-body
-        span.message
-          span.user(style='color: #0A6') User#1
-          | : Hello.
-        span.message
-          span.user(style='color: #A00') User#2
-          | : Hi!
-        span.message
-          span.user(style='color: #06F') Alien
-          | : Greatings, earthlings! I come in peace. Klaatu barada nikto. Here is my
-          a(href='#') gift
-          | to humanity
-        span.message
-          span.user(style='color: #A00') User#2
-          | : Wow!
-        span.message
-          span.user(style='color: #0A6') User#1
-          | : Radical, dude!
+      #message-container.panel-body.chat-body
+        - for (var i = 0; i < messages.length; i++) {
+          span.message
+            span.user(style='color: #0A6')= messages[i].author
+            = ': ' + messages[i].text
+        - }
+        //- span.message
+        //-   span.user(style='color: #0A6') User#1
+        //-   | : Hello.
+        //- span.message
+        //-   span.user(style='color: #A00') User#2
+        //-   | : Hi!
+        //- span.message
+        //-   span.user(style='color: #06F') Alien
+        //-   | : Greatings, earthlings! I come in peace. Klaatu barada nikto. Here is my
+        //-   a(href='#') gift
+        //-   | to humanity
+        //- span.message
+        //-   span.user(style='color: #A00') User#2
+        //-   | : Wow!
+        //- span.message
+        //-   span.user(style='color: #0A6') User#1
+        //-   | : Radical, dude!
+block scripts
+  script(type='text/javascript').
+    global.room = !{JSON.stringify(room)};
+  script(src="bower-components/socket.io-client/socket.io.js")
+  script(src="js/room.js")

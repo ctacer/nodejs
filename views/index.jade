@@ -38,4 +38,9 @@ html
 
     script(src="bower-components/jquery/dist/jquery.min.js")
     script(src="bower-components/bootstrap/dist/js/bootstrap.min.js")
+    script(type='text/javascript').
+      var global = {};
+    if user
+      script(type='text/javascript').
+        global.user = !{JSON.stringify(user)};
     block scripts

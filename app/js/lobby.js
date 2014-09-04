@@ -16,7 +16,7 @@ $(function () {
   };
 
   /**
-   * handler for rocreation,
+   * handler for room creation,
    * function gets room name - checks if its already created and creates or rejects creation
    */
   $('#create-room').off('click').on('click', function (event) {
@@ -33,7 +33,6 @@ $(function () {
       .success(function (result) {
         console.log(result);
         lobby.rebuildRoomList(result.data);
-        //refresh
       })
       .error(function (error) {
         console.error(error);

@@ -25,6 +25,7 @@ global.utils = {};
 
 var express = require('express');
 global.app = express();
+global.server = global.modules.http.createServer(global.app);
 
 
 // app environments
@@ -74,8 +75,9 @@ global.app.use(global.modules.passport.session());
 
 } ();
 
+global.modules.socket = require('./utils/socket-module') (global.server);
 
 //creating http server and setting to listen app port
-global.modules.http.createServer(global.app).listen(global.app.get('port'), function(){
+global.server.listen(global.app.get('port'), function(){
   logger.info('Express server listening on port ' + global.app.get('port'));
 });
