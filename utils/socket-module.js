@@ -64,6 +64,22 @@ ChatRooms.prototype.disconnect = function (socket) {
   });
 };
 
+/**
+ * function saves new message to the room model at db
+ */
+ChatRooms.prototype.saveMessage = function (socket, messageData) {
+  global.modules.db.room.saveMessage(socket.roomName, messageData, function () {
+    // logger.debug('saveMessage');
+  });
+};
+
+/**
+ * function will return all messages for given socket
+ */
+ChatRooms.prototype.getHistory = function (socket, cb) {
+  global.modules.db.room.getHistory(socket.roomName, cb);
+};
+
 
 module.exports = function (server) {
 
@@ -75,10 +91,18 @@ module.exports = function (server) {
 
     socket.on('newmessage', function (data) {
       chatRooms.emit(socket, ['newmessage', data]);
+      chatRooms.saveMessage(socket, data.message);
     });
 
     socket.on('newuser', function (connectionData) {
-      chatRooms.connect(connectionData, socket);      
+      chatRooms.connect(connectionData, socket);
+
+      chatRooms.emit(socket, ['userconnected', { user: socket.userName }]);
+      chatRooms.getHistory(socket, function (history) {
+        socket.emit('history', history);
+      });
+
+      // chatRooms.emit(socket, ['newconnection', { user: connectionData.name }]);
       //broadcast new user
     });
 
@@ -88,6 +112,7 @@ module.exports = function (server) {
       // socket.userName;
       // socket.roomName;
       
+      chatRooms.emit(socket, ['userdisconnected', { user: socket.userName }]);
       chatRooms.disconnect(socket);
     });
     
