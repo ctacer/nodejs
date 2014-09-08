@@ -9,6 +9,9 @@ block content
           span.input-group-btn
             button#create-message.btn.btn-default(type='button') Send
           input#message-text.form-control(type='text')
+        #message-file-container.input-group
+          .drop-zone
+          input#message-file(type='file')
     .panel.panel-default
       #message-container.panel-body.chat-body
         - for (var i = 0; i < messages.length; i++) {
@@ -16,26 +19,12 @@ block content
             span.user(style='color: #0A6')= messages[i].author
             = ': ' + messages[i].text
         - }
-        //- span.message
-        //-   span.user(style='color: #0A6') User#1
-        //-   | : Hello.
-        //- span.message
-        //-   span.user(style='color: #A00') User#2
-        //-   | : Hi!
-        //- span.message
-        //-   span.user(style='color: #06F') Alien
-        //-   | : Greatings, earthlings! I come in peace. Klaatu barada nikto. Here is my
-        //-   a(href='#') gift
-        //-   | to humanity
-        //- span.message
-        //-   span.user(style='color: #A00') User#2
-        //-   | : Wow!
-        //- span.message
-        //-   span.user(style='color: #0A6') User#1
-        //-   | : Radical, dude!
+  a#room-file-link(hidden, download=​"new file.txt")
 block scripts
   script(type='text/javascript').
     global.room = !{JSON.stringify(room)};
   script(src="bower-components/socket.io-client/socket.io.js")
+  script(src="external/socket.io-stream/socket.io-stream.js")
+  script(src="js/file-manager.js")
   script(src="js/input-submiter.js")
   script(src="js/room.js")

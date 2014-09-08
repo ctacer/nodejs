@@ -38,6 +38,7 @@ global.app.set('view engine', 'jade')
 global.app.use(global.modules.bodyParser.json());
 global.app.use(global.modules.bodyParser.urlencoded());
 global.app.use(express.static(global.modules.path.join(__dirname, 'app')));
+global.app.use('/external', express.static(global.modules.path.join(__dirname, 'node_modules')));
 global.app.use(require('express-session')({ secret: 'keyboard cat' }));
 global.app.use(global.modules.passport.initialize());
 global.app.use(global.modules.passport.session());

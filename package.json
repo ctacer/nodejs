@@ -12,6 +12,7 @@
     "passport": "*",
     "passport-local": "*",
     "socket.io": "*",
+    "socket.io-stream": "^0.5.3",
     "winston": "*"
   },
   "scripts": {

@@ -46,3 +46,20 @@ body {
   display: block;
   font-size: 1.2em;
 }
+
+#create-message {
+  border-bottom-left-radius: 0px;
+}
+
+#message-file-container {
+  border: 1px solid #ccc;
+  width: 100%;
+  border-radius: 4px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+#message-file {
+  margin-top: 15px;
+  padding: 5px;
+}

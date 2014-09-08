@@ -30,11 +30,11 @@ ChatRooms.prototype.getId = function (socket) {
  * @param  {[type]} socket [scoket that throws event]
  * @param  {[type]} args [array that will be passed as arguments to emit method]
  */
-ChatRooms.prototype.emit = function (socket, args) {
+ChatRooms.prototype.emit = function (socket, args, socketWrapper) {
   if (this.privates.rooms.hasOwnProperty(socket.roomName)) {
     this.privates.rooms[socket.roomName].forEach(function (member) {      
       if (member.userId != socket.userId) {
-        member.emit.apply(member, args);
+        socketWrapper && typeof socketWrapper == 'function' ? socketWrapper(member, args) : member.emit.apply(member, args);
       }
     });
   }
@@ -84,16 +84,27 @@ ChatRooms.prototype.getHistory = function (socket, cb) {
 module.exports = function (server) {
 
   var io = require('socket.io') (server);  
+  var ss = require('socket.io-stream');
+  var path = require('path');
+  var fs = require('fs');
 
   var chatRooms = new ChatRooms();
   
   io.on('connection', function (socket) {
 
+    /**
+     * listener for new message - 
+     * function saves message data to the db and broadcast to other room's users
+     */
     socket.on('newmessage', function (data) {
       chatRooms.emit(socket, ['newmessage', data]);
       chatRooms.saveMessage(socket, data.message);
     });
 
+    /**
+     * listener will register new user, collect all history for selected room
+     * and sends to all room's users 'new user connected' message, and history data to connceted user
+     */
     socket.on('newuser', function (connectionData) {
       chatRooms.connect(connectionData, socket);
 
@@ -101,19 +112,31 @@ module.exports = function (server) {
       chatRooms.getHistory(socket, function (history) {
         socket.emit('history', history);
       });
-
-      // chatRooms.emit(socket, ['newconnection', { user: connectionData.name }]);
-      //broadcast new user
     });
 
+    /**
+     * listener for disconnection of the user - 
+     * broadcasts to all room's users user disconnected message,
+     * and removes user from chat room instance
+     */
     socket.on('disconnect', function () {
-
-      // broadcast user disconnect
-      // socket.userName;
-      // socket.roomName;
-      
       chatRooms.emit(socket, ['userdisconnected', { user: socket.userName }]);
       chatRooms.disconnect(socket);
+    });
+
+    /**
+     * experimental file streaming
+     */
+    ss(socket).on('file', function(stream, data) {
+      var filename = path.basename(data.name);
+      logger.debug('stream file ' + filename);
+      var newStream = ss.createStream();      
+
+      chatRooms.emit(socket, ['newfile', { user: socket.userName }], function (member, args) {
+        logger.debug(member.userName);
+        ss(member).emit('newfile', newStream, data);
+      });
+      stream.pipe(newStream);
     });
     
   });

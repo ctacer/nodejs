@@ -82,6 +82,14 @@ $(function () {
 
   });
 
+  global.fileDropper.buildFrom({ input: $('#message-file'), drop: $('#message-drop') }).handle(function (event) {
+    var file = event.target.files[0];
+    var stream = ss.createStream();
+
+    ss(socket).emit('file', stream, { size: file.size, name:file.name });
+    ss.createBlobReadStream(file).pipe(stream);
+  });
+
 
   socket.on('newmessage', function (data) {
     room.addMessage(data);
@@ -103,6 +111,30 @@ $(function () {
       .forEach(function (message) {
         room.addMessage({ message: message });
       });    
+  });
+
+  ss(socket).on('newfile', function (stream, opts) {
+    var result = [];
+
+    stream.on('data', function (buffer) {      
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        result.push(e.target.result);
+      };
+      var blob = new Blob([buffer]);
+      reader.readAsText(blob);
+    });
+
+    stream.on('end', function () {
+      console.log(result.join(''));
+
+      global.fileManager.saveFile({
+        name: opts.name,
+        text: result.join(''),
+        useBlob: true
+      });
+    });
+    
   });
 
 });
