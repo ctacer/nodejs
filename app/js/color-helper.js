@@ -1,6 +1,6 @@
 
 
-!function (exports) {
+(function (exports) {
   
   "use strict";
 
@@ -40,10 +40,10 @@
    * function generates new color
    */
   ColorHandler.prototype.generate = function () {
-    var randColor = this.getRandomColor();
+    var randColor = this.random();
 
     while (this.exists(randColor)) {
-      randColor = this.getRandomColor();
+      randColor = this.random();
     }
 
     return randColor;
@@ -58,7 +58,7 @@
       return this.privates.colorMap[author];
     }
     else {
-      return this.privates.colorMap[author] = this.generateNewColor();
+      return this.privates.colorMap[author] = this.generate();
     }
   };
 

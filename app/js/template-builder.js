@@ -1,6 +1,6 @@
 
 
-!function (exports) {
+(function (exports) {
   
   "use strict";
 
@@ -12,7 +12,7 @@
 
     var props = [];
     for (var key in obj) {
-      if (obj.hasOwmProperty(key)) {
+      if (obj.hasOwnProperty(key)) {
         props.push({ key: key, value: obj[key] });
       }
     }
