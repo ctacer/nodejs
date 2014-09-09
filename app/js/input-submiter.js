@@ -68,4 +68,4 @@
     };
   };
 
-} (global);
+}) (global || window);

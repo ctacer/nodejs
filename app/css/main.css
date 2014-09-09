@@ -1,6 +1,29 @@
 body {
 }
 
+.clear {
+  clear: both;
+}
+
+#top-header {
+  position: relative;
+  margin: auto;
+  max-width: 330px;
+  padding: 15px;
+  padding-top: 5px;
+}
+
+#top-header>.header-right-container {
+  float: right;
+  text-decoration: none;
+}
+
+#top-header>.header-right-container span {  
+  color: #428bca;
+  margin: 10px;
+  padding: 5px;
+}
+
 .main-container {
   padding: 30px;
 }

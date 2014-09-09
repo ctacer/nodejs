@@ -1,72 +1,49 @@
 
 
 $(function () {
-  
+
   "use strict";
 
   var room = {};
-
-  room.messageColors = {
-    'white': '#ffffff',
-    'admin': '#dddddd'
-  };
-
-  room.getRandomColor = function () {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return Math.random() > 0.5 ? color : '#dddddd';
-  };
-
-  room.colorExists = function (color) {
-    for (var key in this.messageColors) {
-      if (!this.messageColors.hasOwnProperty(key)) continue;
-
-      if (this.messageColors[key] === color) return true;
-    }
-
-    return false;
-  };
-
-  room.generateNewColor = function () {
-    var randColor = this.getRandomColor();
-
-    while (this.colorExists(randColor)) {
-      randColor = this.getRandomColor();
-    }
-
-    return randColor;
-  };
-
-  room.getMessageColor = function (author) {    
-    if (this.messageColors.hasOwnProperty(author)) {
-      return this.messageColors[author];
-    }
-    else {
-      return this.messageColors[author] = this.generateNewColor();
-    }
-  };
-
-  room.addMessage = function (data) {
-    $('#message-container').append(
-      '<span class="message"><span class="user" style="color: ' + room.getMessageColor(data.message.author) + '">' + data.message.author + '</span>: ' + data.message.text + '</span>'
-    );
-  };
-
-  // var socket = io.connect('http://localhost');
-  
   var socket = io('http://localhost');
 
-  socket.on('connect', function (data) {
-    socket.emit('newuser', { name: global.user.login, room: global.room.name });
-  });
+  room.colorHandler = new global.ColorHandler({
+    colorMap: {
+      white: '#ffffff',
+      admin: '#dddddd'
+    }
+  });  
 
   /**
-   * handler for message creation
+   * function builds new message template and appends it to chat list
+   * @param {[type]} data [description]
    */
- global.inputSubmiter.buildFrom({ button: $('#create-message'), field: $('#message-text') }).handle(function (customEvent) {
+  room.addMessage = function (data) {
+    $('#message-container').append(global.templates.message({ 
+      color: room.colorHandler.colorizeMessage(data.message.author),
+      author: data.message.author,
+      text: data.message.text
+    }));
+  };
+
+  /**
+   * function builds new file message template and appends it to the chat list
+   */
+  room.addFileLink = function (data) {
+    console.log(data.message);
+
+    $('#message-container').append(global.templates.fileMessage({
+      color: room.colorHandler.colorizeMessage(data.message.author),
+      author: data.message.author,
+      text: data.message.text,
+      link: data.message.link
+    }));
+  };
+
+ /**
+  * handler for message creation
+  */
+  global.inputSubmiter.buildFrom({ button: $('#create-message'), field: $('#message-text') }).handle(function (customEvent) {
 
     var messageText = customEvent.field.val();
     customEvent.field.val('');
@@ -82,14 +59,35 @@ $(function () {
 
   });
 
-  global.fileDropper.buildFrom({ input: $('#message-file'), drop: $('#message-drop') }).handle(function (event) {
+  /**
+   * handler for file uploading
+   */
+   global.fileDropper.buildFrom({ input: $('#message-file'), drop: $('#message-drop') }).handle(function (event) {
     var file = event.target.files[0];
     var stream = ss.createStream();
 
-    ss(socket).emit('file', stream, { size: file.size, name:file.name });
+    ss(socket).emit('file', stream, { size: file.size, name:file.name, author: global.user.login });
     ss.createBlobReadStream(file).pipe(stream);
+
+    /*var reader = new FileReader();
+    reader.onload = function(evt){
+
+      socket.emit('userfile', { 
+        link: evt.target.result,
+        author: global.user.login,
+        file: {
+          name: file.name,
+          type: file.type
+        }
+      });
+    };
+
+    reader.readAsDataURL(file); */
   });
 
+  socket.on('connect', function (data) {
+    socket.emit('newuser', { name: global.user.login, room: global.room.name });
+  });
 
   socket.on('newmessage', function (data) {
     room.addMessage(data);
@@ -105,35 +103,89 @@ $(function () {
 
   socket.on('history', function (data) {
     data
-      .sort(function (f, s) {
-        return f.timestamp - s.timestamp;
-      })
-      .forEach(function (message) {
-        room.addMessage({ message: message });
-      });    
+    .sort(function (f, s) {
+      return f.timestamp - s.timestamp;
+    })
+    .forEach(function (message) {
+      room.addMessage({ message: message });
+    });    
+  });
+
+
+
+
+  /**
+   * experimental file uploader
+   */
+  socket.on('userfile', function (data) {
+    var proceed = function (dataUrl) {
+      room.addFileLink({
+        message: {
+          author: data.author,
+          text: data.file.name,
+          link: dataUrl
+        }
+      });
+    };
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      proceed(e.target.result);
+    };
+    reader.readAsDataURL(data.link);
   });
 
   ss(socket).on('newfile', function (stream, opts) {
     var result = [];
+    var parts = [];
 
     stream.on('data', function (buffer) {      
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        result.push(e.target.result);
-      };
-      var blob = new Blob([buffer]);
-      reader.readAsText(blob);
+      // var reader = new FileReader();
+      // reader.onload = function(e) {
+      //   result.push(e.target.result);
+      // };
+      // var blob = new Blob([buffer]);
+      parts.push(buffer);
+      // reader.readAsText(blob);
     });
 
     stream.on('end', function () {
-      console.log(result.join(''));
+      // console.log(result.join(''));
 
-      global.fileManager.saveFile({
+      //
+      // var link = (window.URL || window.webkitURL).createObjectURL(new Blob(parts));
+
+      var proceed = function (dataUrl) {
+        room.addFileLink({
+          message: {
+            author: opts.author,
+            text: opts.name,
+            link: dataUrl
+          }
+        });
+      };
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        proceed(e.target.result);
+      };
+      reader.readAsDataURL(new Blob(parts));
+
+      // room.addFileLink({
+      //   message: {
+      //     author: opts.author,
+      //     text: opts.name,
+      //     link: link
+      //   }
+      // });
+
+
+      /*global.fileManager.saveFile({
         name: opts.name,
         text: result.join(''),
         useBlob: true
-      });
-    });
+      });*/
+  });
     
   });
 

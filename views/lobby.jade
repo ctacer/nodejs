@@ -13,13 +13,6 @@ block content
       - for (var i = 0; i < rooms.length; i ++) {
         a.list-group-item(href='/room?name=' + encodeURIComponent(rooms[i].name))= rooms[i].name
       - }
-      //- a.list-group-item.active(href='#') Room #1
-      //- a.list-group-item(href='#') Room #2
-      //- a.list-group-item(href='#') Test room
-      //- a.list-group-item(href='#') Stupid room
-      //- a.list-group-item(href='#') Support room
-
-
 block scripts
   script(src="js/input-submiter.js")
   script(src="js/lobby.js")

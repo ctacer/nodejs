@@ -24,15 +24,12 @@ html
   
   body
     if user && user.login
-      header#top.navbar.navbar-static-top.bs-docs-nav(role='banner')
-        div.container
-          nav.collapse.navbar-collapse.bs-navbar-collapse(role='navigation')
-            ul.nav.navbar-nav.navbar-right            
-              li
-                a(href="#")= user.login
-              li
-                a(href="/user/logout") sign out
-
+      header#top-header
+        .header-right-container
+          span= user.login
+          span
+            a(href="/user/logout") sign out
+        .clear
     .main-container
       block content
 
@@ -43,4 +40,5 @@ html
     if user
       script(type='text/javascript').
         global.user = !{JSON.stringify(user)};
+    script(src='js/template-builder.js')
     block scripts

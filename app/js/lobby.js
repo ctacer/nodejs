@@ -11,7 +11,10 @@ $(function () {
 
     list.empty();
     newList.forEach(function (item) {
-      list.append('<a class="list-group-item" href="/room?name=' + encodeURIComponent(item.name) + '">' + item.name + '</a>');
+      list.append(global.templates.roomItem({
+        name: item.name,
+        encodedName: encodeURIComponent(item.name)
+      }));
     });
   };
 

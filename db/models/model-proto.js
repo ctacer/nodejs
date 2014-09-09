@@ -57,18 +57,6 @@ module.exports = function (Model, logger) {
     'findOne': function (condition, cb) {
       var args = buildFindArgs.apply(null, Array.prototype.slice.call(arguments, 0));      
       Model.findOne.apply(Model, args);
-
-      // var findCallback = function (records) {
-      //   cb(records && records.length ? records[0] : null);
-      // };
-
-      // if (typeof condition == 'function') {
-      //   cb = condition;
-      //   this.find(findCallback);
-      // }
-      // else if (typeof cb == 'function') {
-      //   this.find(condition, findCallback);
-      // }
     },
 
     /**

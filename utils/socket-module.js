@@ -124,6 +124,10 @@ module.exports = function (server) {
       chatRooms.disconnect(socket);
     });
 
+    socket.on('userfile', function (data) {
+      chatRooms.emit(socket, ['userfile', data]);
+    });
+
     /**
      * experimental file streaming
      */

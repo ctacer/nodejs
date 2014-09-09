@@ -19,27 +19,6 @@ module.exports.index = function(req, res) {
   }  
 };
 
-module.exports.testUser = function (req, res) {
-  global.modules.db.user.find(function (result) {
-    res.render('test', { title : 'Test Users', user: req.user, data: result });
-  });
-};
-
-module.exports.testRoom = function (req, res) {
-  global.modules.db.room.find(function (result) {
-    res.render('test', { title : 'Test Rooms', user: req.user, data: result });
-  });
-};
-
-module.exports.removeRooms = function (req, res) {
-  global.modules.db.room.find(function (result) {
-    for (var i = 0; i < result.length; i++) {
-      result[i].remove();
-    };
-    res.redirect('/test/room');
-  });
-};
-
 module.exports.lobby = function(req, res) {
   global.modules.db.room.find(function (result) {
     res.render('lobby', { title : 'Lobby', user: req.user, rooms: result });

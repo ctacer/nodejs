@@ -52,8 +52,6 @@ global.app.use(global.modules.passport.session());
 
   //app navigation routes
   global.app.get('/', global.routes.navigation.index);
-  global.app.get('/test/user', global.routes.navigation.testUser);
-  global.app.get('/test/room', global.routes.navigation.testRoom);
   global.app.get('/login', global.routes.navigation.login);
   global.app.get('/register', global.routes.navigation.register);
   global.app.get('/lobby', global.routes.navigation.checkUserLogin, global.routes.navigation.lobby);
@@ -63,9 +61,6 @@ global.app.use(global.modules.passport.session());
   global.app.post('/user/login', global.routes.user.login);
   global.app.post('/user/register', global.routes.user.register);
   global.app.get('/user/logout', global.routes.user.logout);
-
-  //dev routes
-  global.app.get('/remove/room', global.routes.navigation.removeRooms);
 
   global.app.put('/room', global.routes.room.createRoom);
 
