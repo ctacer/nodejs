@@ -63,7 +63,11 @@ global.app.use(global.modules.passport.session());
   global.app.post('/user/register', global.routes.user.register);
   global.app.get('/user/logout', global.routes.user.logout);
 
-  global.app.put('/room', global.routes.room.createRoom);
+  // global.app.put('/room', global.routes.room.createRoom);
+
+  //dev routes
+  global.app.get('/test/room', global.routes.navigation.testRoom);
+  global.app.get('/remove/room', global.routes.navigation.removeRooms);
 
   //listen to not registered routes and redirects to home page
   global.app.all('*', function (req, res) {

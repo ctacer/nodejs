@@ -7,10 +7,15 @@ var logger = require(global.config.logger.dist)(module);
 module.exports = function (mongoose) {
   var exports = {};
 
+  var MessageTypes = {
+    plain: 'plain/text',
+    file: 'file/text'
+  };
+
   var RoomSchema = mongoose.Schema({
     name: String,
     owner: String,
-    messages: [{ author: String, text: String, timestamp: Number }]
+    messages: [{ itype: String, author: String, text: String, timestamp: Number }]
   });
 
   var Room = mongoose.model('Room', RoomSchema);
@@ -18,18 +23,28 @@ module.exports = function (mongoose) {
   /**
    * function finds room by name and adds new message to messages array
    */
-  exports.saveMessage = function (roomName, message, cb) {
-    cb = cb || function () {};
-
+  var saveMessage = function (roomName, message, cb) {
     this.findOne({ name: roomName }, function (room) {
       if (!room) { 
         logger.debug('no room "' + roomName + '" is found!');
         return cb();
       };
 
-      room.messages.push({ author: message.author, text: message.text, timestamp: Date.now() });
+      room.messages.push({ author: message.author, itype: message.type, text: message.text, timestamp: Date.now() });
+      logger.debug(message.type);
+      logger.debug(room.messages[room.messages.length - 1].type);
       room.save(cb);
     });
+  };
+
+  exports.saveMessage = function (roomName, message, cb) {
+    cb = cb || function () {};
+    saveMessage.apply(this, [roomName, { author: message.author, itype: MessageTypes.plain, text: message.text, timestamp: Date.now() }, cb]);
+  };
+
+  exports.saveFileLink = function (roomName, message, cb) {
+    cb = cb || function () {};
+    saveMessage.apply(this, [roomName, { author: message.author, itype: MessageTypes.file, text: message.text, timestamp: Date.now() }, cb]);
   };
 
   /**

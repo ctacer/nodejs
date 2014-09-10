@@ -7,6 +7,11 @@ $(function () {
   var room = {};
   var socket = io('http://localhost');
 
+  var MessageTypes = {
+    plain: 'plain/text',
+    file: 'file/text'
+  };
+
   room.colorHandler = new global.ColorHandler({
     colorMap: {
       white: '#ffffff',
@@ -63,11 +68,10 @@ $(function () {
   /**
    * handler for file uploading
    */
-   global.fileDropper.buildFrom({ input: $('#message-file'), drop: $('#message-drop') }).handle(function (event) {
+  global.fileDropper.buildFrom({ input: $('#message-file'), drop: $('#message-drop') }).handle(function (event) {
     var file = event.target.files[0];
     var stream = ss.createStream();
 
-    console.log(file);
     ss(socket).emit('file', stream, { type: file.type, size: file.size, name: file.name, author: global.user.login });
     ss.createBlobReadStream(file).pipe(stream);
   });
@@ -94,12 +98,15 @@ $(function () {
       return f.timestamp - s.timestamp;
     })
     .forEach(function (message) {
-      room.addMessage({ message: message });
-    });    
+      if (message.itype == MessageTypes.plain) {
+        room.addMessage({ message: message });
+      }
+      else if (message.itype == MessageTypes.file) {
+        message.link = '/upload/' + message.text;
+        room.addFileLink({ message: message });
+      }
+    });
   });
-
-
-
 
   /**
    * experimental file uploader
@@ -114,29 +121,8 @@ $(function () {
     });
   });
 
-  ss(socket).on('newfile', function (stream, opts) {
-    var result = [];
-    var parts = [];
-
-    stream.on('data', function (buffer) {      
-      parts.push(buffer);
-    });
-
-    stream.on('end', function () {
-      var link = global.fileManager.getFileLink({
-        buffer: parts,
-        type: opts.type
-      });
-
-      room.addFileLink({
-        message: {
-          author: opts.author,
-          text: opts.name,
-          link: link
-        }
-      });
-  });
-    
+  socket.on('newfileprogress', function (data) {
+    console.log(data.progress);
   });
 
 });

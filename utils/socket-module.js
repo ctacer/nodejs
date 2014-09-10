@@ -76,6 +76,15 @@ ChatRooms.prototype.saveMessage = function (socket, messageData) {
 };
 
 /**
+ * function saves link to sent files as a message
+ */
+ChatRooms.prototype.saveFileLink = function (socket, messageData) {
+  global.modules.db.room.saveFileLink(socket.roomName, messageData, function () {
+    // logger.debug('saveMessage');
+  });
+};
+
+/**
  * function will return all messages for given socket
  */
 ChatRooms.prototype.getHistory = function (socket, cb) {
@@ -184,15 +193,21 @@ module.exports = function (server) {
      * experimental file streaming
      */
     ss(socket).on('file', function(stream, data) {
-      console.log(data.name);
       var filename = path.basename(data.name);
-      logger.debug('stream file ' + filename);
       var writer = fs.createWriteStream(global.__dirname + '/upload/' + filename);
       stream.pipe(writer);
+      var size = 0;
+
+      stream.on && stream.on('data', function (chunk) {
+        size += chunk.length;
+        var progress = Math.floor(size / data.size * 100);
+        chatRooms.emit(socket, ['newfileprogress', { user: socket.userName, filename: filename, progress: progress }]);
+      });
 
       writer.on('finish', function() {
         logger.info('all writes are now complete.');
         chatRooms.emit(socket, ['newfilelink', { user: socket.userName, filename: filename, link: '/upload/' + filename }]);
+        chatRooms.saveFileLink(socket, { author: socket.userName, text: filename });
       });
     });
     

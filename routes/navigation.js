@@ -10,6 +10,22 @@ module.exports.checkUserLogin = function (req, res, next)  {
   }
 };
 
+module.exports.removeRooms = function (req, res) {
+  global.modules.db.room.find(function (result) {
+    for (var i = 0; i < result.length; i++) {
+      result[i].remove();
+    };
+    res.redirect('/test/room');
+  });
+};
+
+module.exports.testRoom = function (req, res) {
+  global.modules.db.room.find(function (result) {
+    res.render('test', { title : 'Test Rooms', user: req.user, data: result });
+  });
+};
+
+
 module.exports.index = function(req, res) {
   if (req.user) {
     res.redirect('/lobby');

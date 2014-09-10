@@ -1,0 +1,7 @@
+extends ./index.jade
+
+block content
+  .content-block
+    - for (var i = 0; i < data.length; ++i) {
+      div= data[i]
+    - }
