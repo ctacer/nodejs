@@ -36,6 +36,7 @@ $(function () {
       color: room.colorHandler.colorizeMessage(data.message.author),
       author: data.message.author,
       text: data.message.text,
+      download: data.message.text,
       link: data.message.link
     }));
   };
@@ -66,23 +67,9 @@ $(function () {
     var file = event.target.files[0];
     var stream = ss.createStream();
 
-    ss(socket).emit('file', stream, { size: file.size, name:file.name, author: global.user.login });
+    console.log(file);
+    ss(socket).emit('file', stream, { type: file.type, size: file.size, name: file.name, author: global.user.login });
     ss.createBlobReadStream(file).pipe(stream);
-
-    /*var reader = new FileReader();
-    reader.onload = function(evt){
-
-      socket.emit('userfile', { 
-        link: evt.target.result,
-        author: global.user.login,
-        file: {
-          name: file.name,
-          type: file.type
-        }
-      });
-    };
-
-    reader.readAsDataURL(file); */
   });
 
   socket.on('connect', function (data) {
@@ -117,22 +104,14 @@ $(function () {
   /**
    * experimental file uploader
    */
-  socket.on('userfile', function (data) {
-    var proceed = function (dataUrl) {
-      room.addFileLink({
-        message: {
-          author: data.author,
-          text: data.file.name,
-          link: dataUrl
-        }
-      });
-    };
-
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      proceed(e.target.result);
-    };
-    reader.readAsDataURL(data.link);
+  socket.on('newfilelink', function (data) {
+    room.addFileLink({
+      message: {
+        author: data.user,
+        text: data.filename,
+        link: data.link
+      }
+    });
   });
 
   ss(socket).on('newfile', function (stream, opts) {
@@ -140,51 +119,22 @@ $(function () {
     var parts = [];
 
     stream.on('data', function (buffer) {      
-      // var reader = new FileReader();
-      // reader.onload = function(e) {
-      //   result.push(e.target.result);
-      // };
-      // var blob = new Blob([buffer]);
       parts.push(buffer);
-      // reader.readAsText(blob);
     });
 
     stream.on('end', function () {
-      // console.log(result.join(''));
+      var link = global.fileManager.getFileLink({
+        buffer: parts,
+        type: opts.type
+      });
 
-      //
-      // var link = (window.URL || window.webkitURL).createObjectURL(new Blob(parts));
-
-      var proceed = function (dataUrl) {
-        room.addFileLink({
-          message: {
-            author: opts.author,
-            text: opts.name,
-            link: dataUrl
-          }
-        });
-      };
-
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        proceed(e.target.result);
-      };
-      reader.readAsDataURL(new Blob(parts));
-
-      // room.addFileLink({
-      //   message: {
-      //     author: opts.author,
-      //     text: opts.name,
-      //     link: link
-      //   }
-      // });
-
-
-      /*global.fileManager.saveFile({
-        name: opts.name,
-        text: result.join(''),
-        useBlob: true
-      });*/
+      room.addFileLink({
+        message: {
+          author: opts.author,
+          text: opts.name,
+          link: link
+        }
+      });
   });
     
   });

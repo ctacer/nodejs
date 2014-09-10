@@ -1,5 +1,7 @@
 
 var logger = require(global.config.logger.dist)(module);
+var fs = require('fs');
+var async = require('async');
 
 var ChatRooms = function () {
   this.privates = {
@@ -124,23 +126,74 @@ module.exports = function (server) {
       chatRooms.disconnect(socket);
     });
 
-    socket.on('userfile', function (data) {
-      chatRooms.emit(socket, ['userfile', data]);
+    /**
+     * listener for new room creation
+     * function will save new room if it does not exists already 
+     * and broadcast new room list to all users
+     */
+    socket.on('room', function (data) {
+      var roomName = data.roomName;
+
+      async.waterfall([
+        /**
+         * function checks if room already exists
+         * and call next cb with boolean result
+         */
+        function (callback) {
+          global.modules.db.room.find({ name: roomName }, function (data) {
+            callback(null, data && data.length);
+          });
+        },
+
+        /**
+         * function calls new cb if room already exists, 
+         * otherwise creates new room instance and procceds
+         */
+        function (exists, callback) {
+          if (exists) {
+            callback(null, { ok: false, error: new Error('room ' + roomName + 'already exists') });
+          }
+          else {
+            global.modules.db.room.save({ name: roomName }, function (error) {
+              callback(null, { ok: !error, error: error });
+            });
+          }
+        },
+
+        /**
+         * function retrieves all existed rooms and ands 'wateflow'
+         */
+        function (saveResult, callback) {
+          global.modules.db.room.find(function (data) {
+            saveResult.data = data;
+            callback(null, saveResult);
+          });
+        }
+      ], 
+
+      /**
+       * main callback will be called with error if at any steps we had some errors
+       * otherwise we will have response object to send to the users
+       */
+      function (err, response) {
+        io.emit('room', response);
+      });
     });
 
     /**
      * experimental file streaming
      */
     ss(socket).on('file', function(stream, data) {
+      console.log(data.name);
       var filename = path.basename(data.name);
       logger.debug('stream file ' + filename);
-      var newStream = ss.createStream();      
+      var writer = fs.createWriteStream(global.__dirname + '/upload/' + filename);
+      stream.pipe(writer);
 
-      chatRooms.emit(socket, ['newfile', { user: socket.userName }], function (member, args) {
-        logger.debug(member.userName);
-        ss(member).emit('newfile', newStream, data);
+      writer.on('finish', function() {
+        logger.info('all writes are now complete.');
+        chatRooms.emit(socket, ['newfilelink', { user: socket.userName, filename: filename, link: '/upload/' + filename }]);
       });
-      stream.pipe(newStream);
     });
     
   });

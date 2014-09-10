@@ -5,6 +5,7 @@ $(function () {
   "use strict";
 
   var lobby = {};
+  var socket = io('http://localhost');
 
   lobby.rebuildRoomList = function (newList) {
     var list = $('#room-list');
@@ -26,7 +27,11 @@ $(function () {
     var roomName = customEvent.field.val();
     customEvent.field.val('');
 
-    var promise = $.ajax({
+    socket.emit('room', {
+      roomName: roomName
+    });
+
+    /*var promise = $.ajax({
       url: '/room',
       type: 'PUT',
       data: { 'roomName' : roomName }
@@ -40,9 +45,12 @@ $(function () {
       .error(function (error) {
         console.error(error);
         //show error message
-      });
+      });*/
   });
 
+  socket.on('room', function (result) {
+    lobby.rebuildRoomList(result.data);
+  });
 
 
 });

@@ -1,3 +1,4 @@
 app/bower-components/*
 node_modules/*
 app/templates/*
+upload/*

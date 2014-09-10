@@ -41,11 +41,12 @@
    */
   var buildTemplate = function (template) {
     return function (opts) {
+      var copy = template;
       var props = buildPropsArray(opts).forEach(function (prop) {
-        template = template.replaceTemplate(prop);
+        copy = copy.replaceTemplate(prop);
       });
 
-      return template
+      return copy
     };
   };
 
@@ -60,7 +61,7 @@
   ].join(''));
 
   templates['fileMessage'] = buildTemplate([
-    '<span class="file-message"><span class="user" style="color: %color%">%author%</span class="file-link">: <a target="_blank" href="%link%">%text%</a></span>'
+    '<span class="file-message"><span class="user" style="color: %color%">%author%</span class="file-link">: <a download="%download%" href="%link%">%text%</a></span>'
   ].join(''));
 
   templates['roomItem'] = buildTemplate([

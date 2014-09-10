@@ -14,5 +14,6 @@ block content
         a.list-group-item(href='/room?name=' + encodeURIComponent(rooms[i].name))= rooms[i].name
       - }
 block scripts
+  script(src="bower-components/socket.io-client/socket.io.js")
   script(src="js/input-submiter.js")
   script(src="js/lobby.js")
