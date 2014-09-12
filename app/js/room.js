@@ -17,33 +17,73 @@ $(function () {
       white: '#ffffff',
       admin: '#dddddd'
     }
-  });  
+  });
+
+  room.fillColor = function (message) {
+    message.color = room.colorHandler.colorizeMessage(message.author);
+  };
 
   /**
    * function builds new message template and appends it to chat list
-   * @param {[type]} data [description]
    */
-  room.addMessage = function (data) {
-    $('#message-container').append(global.templates.message({ 
-      color: room.colorHandler.colorizeMessage(data.message.author),
-      author: data.message.author,
-      text: data.message.text
-    }));
+  room.addMessage = function (message) {
+    room.fillColor(message);
+
+    $('#message-container').append(global.templates.message(message));
   };
 
   /**
    * function builds new file message template and appends it to the chat list
    */
-  room.addFileLink = function (data) {
-    console.log(data.message);
+  room.addFileLink = function (message, element) {
+    room.fillColor(message);
+    message.download = message.text;
 
-    $('#message-container').append(global.templates.fileMessage({
-      color: room.colorHandler.colorizeMessage(data.message.author),
-      author: data.message.author,
-      text: data.message.text,
-      download: data.message.text,
-      link: data.message.link
-    }));
+    if (!element) {
+      $('#message-container').append(global.templates.fileMessage(message));
+    }
+    else {
+      element.empty();
+      element.append(global.templates.fileMessage(message));
+    }
+  };
+
+  room.addFileUpload = function (message) {
+    room.fillColor(message);
+    message.progress = message.progress || 0;
+
+    var element = $('<div class="file-upload-container"></div>');
+    $('#message-container').append(element);
+    element.append(global.templates.fileUpload(message));
+    return element;
+  };
+
+  room.updateFileUpload = function (message, element) {
+    room.fillColor(message);
+    message.progress = message.progress || 0;
+
+    element.empty();
+    element.append(global.templates.fileUpload(message));
+    return element;
+  };
+
+  room.addFileWaitingLink = function (message) {
+    room.fillColor(message);
+    message.progress = message.progress || 0;
+
+    var element = $('<div class="file-wait-container">gg</div>');
+    $('#message-container').append(element);
+    element.append(global.templates.fileWait(message));    
+    return element;
+  };
+
+  room.updateFileWaitingLink = function (message, element) {
+    room.fillColor(message);
+    message.progress = message.progress || 0;
+
+    element.empty();
+    element.append(global.templates.fileWait(message));
+    return element;
   };
 
  /**
@@ -61,7 +101,7 @@ $(function () {
     };
 
     socket.emit('newmessage', reqData);
-    room.addMessage(reqData);
+    room.addMessage(message);
 
   });
 
@@ -76,22 +116,28 @@ $(function () {
     ss.createBlobReadStream(file).pipe(stream);
   });
 
+  /**
+   * listeners for socket events
+   */
   socket.on('connect', function (data) {
     socket.emit('newuser', { name: global.user.login, room: global.room.name });
   });
 
   socket.on('newmessage', function (data) {
-    room.addMessage(data);
+    room.addMessage(data.message);
   });
 
   socket.on('userdisconnected', function (data) {
-    room.addMessage({ message: { author: 'admin', text: 'user ' + data.user + ' just left chat room' } });
+    // room.addMessage({ author: 'admin', text: 'user ' + data.user + ' just left chat room' });
   });
 
   socket.on('userconnected', function (data) {
-    room.addMessage({ message: { author: 'admin', text: 'user ' + data.user + ' just joined chat room' } });
+    // room.addMessage({ author: 'admin', text: 'user ' + data.user + ' just joined chat room' });
   });
 
+  /**
+   * loads all room history
+   */
   socket.on('history', function (data) {
     data
     .sort(function (f, s) {
@@ -99,30 +145,36 @@ $(function () {
     })
     .forEach(function (message) {
       if (message.itype == MessageTypes.plain) {
-        room.addMessage({ message: message });
+        room.addMessage(message);
       }
       else if (message.itype == MessageTypes.file) {
-        message.link = '/upload/' + message.text;
-        room.addFileLink({ message: message });
+        message.link = '/upload/' + message.author + '/' + message.text;
+        room.addFileLink(message);
       }
     });
+  });
+  
+
+  /**
+   * listener for file progress event (when other user uploads file to the server)
+   */
+  socket.on('newfileprogress', function (message) {
+    global.messageObserver.getFunction(message, {
+      initCb: room.addFileWaitingLink,
+      updateCb: room.updateFileWaitingLink,
+      doneCb: room.addFileLink
+    });    
   });
 
   /**
-   * experimental file uploader
+   * listener for file upload event (when current user choose file to upload on the server)
    */
-  socket.on('newfilelink', function (data) {
-    room.addFileLink({
-      message: {
-        author: data.user,
-        text: data.filename,
-        link: data.link
-      }
+  socket.on('fileuploadprogress', function (message) {
+    global.messageObserver.getFunction(message, {
+      initCb: room.addFileUpload,
+      updateCb: room.updateFileUpload,
+      doneCb: room.addFileLink
     });
-  });
-
-  socket.on('newfileprogress', function (data) {
-    console.log(data.progress);
   });
 
 });

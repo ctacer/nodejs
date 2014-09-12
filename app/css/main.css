@@ -8,17 +8,24 @@ body {
 #top-header {
   position: relative;
   margin: auto;
-  max-width: 330px;
+  max-width: 600px;
   padding: 15px;
   padding-top: 5px;
 }
 
+#top-header>.header-left-container {
+  float: left;
+}
+
 #top-header>.header-right-container {
   float: right;
+}
+
+#top-header>.header-left-container, #top-header>.header-right-container {
   text-decoration: none;
 }
 
-#top-header>.header-right-container span {  
+#top-header>.header-left-container span, #top-header>.header-right-container span {  
   color: #428bca;
   margin: 10px;
   padding: 5px;
@@ -30,7 +37,7 @@ body {
 
 .block-panel {
   margin: auto;
-  max-width: 330px;
+  max-width: 600px;
   padding: 15px;
 }
 .block-panel .block-panel-heading,
@@ -65,7 +72,7 @@ body {
   border-top-right-radius: 0;
 }
 
-.chat-body .message{
+.chat-body .message, .chat-body .file-message {
   display: block;
   font-size: 1.2em;
 }

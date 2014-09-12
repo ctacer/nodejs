@@ -10,22 +10,6 @@ module.exports.checkUserLogin = function (req, res, next)  {
   }
 };
 
-module.exports.removeRooms = function (req, res) {
-  global.modules.db.room.find(function (result) {
-    for (var i = 0; i < result.length; i++) {
-      result[i].remove();
-    };
-    res.redirect('/test/room');
-  });
-};
-
-module.exports.testRoom = function (req, res) {
-  global.modules.db.room.find(function (result) {
-    res.render('test', { title : 'Test Rooms', user: req.user, data: result });
-  });
-};
-
-
 module.exports.index = function(req, res) {
   if (req.user) {
     res.redirect('/lobby');
@@ -37,6 +21,9 @@ module.exports.index = function(req, res) {
 
 module.exports.lobby = function(req, res) {
   global.modules.db.room.find(function (result) {
+    result.sort(function (f, s) {
+      return f.timestamp - s.timestamp;
+    });
     res.render('lobby', { title : 'Lobby', user: req.user, rooms: result });
   });
 };
@@ -52,19 +39,14 @@ module.exports.register = function(req, res) {
 module.exports.room = function(req, res) {
   var roomName = req.query.name;
 
-  var roomObject = {
-    owner: 'user #1',
-    name: roomName
-  };
-  var messages = [
-    { author: 'user #2', text: 'Hi All' },
-    { author: 'user #1', text: 'Hi man' },
-    { author: 'user #2', text: 'Fuck off!' }
-  ];
-
   global.modules.db.room.find({ name: roomName }, function (result) {
-    var debugRoom = result && result.length ? result[0] : {};
+    var room = result && result.length ? result[0] : null;
 
-    res.render('room', { title : 'Room', user: req.user, room: roomObject, messages: [], debugRoom: debugRoom });
+    if (room) {
+      res.render('room', { title : 'Room', user: req.user, room: room });
+    }
+    else {
+      res.redirect('/lobby');
+    }
   });
 };

@@ -15,6 +15,7 @@ module.exports = function (mongoose) {
   var RoomSchema = mongoose.Schema({
     name: String,
     owner: String,
+    timestamp: Number,
     messages: [{ itype: String, author: String, text: String, timestamp: Number }]
   });
 
@@ -30,9 +31,7 @@ module.exports = function (mongoose) {
         return cb();
       };
 
-      room.messages.push({ author: message.author, itype: message.type, text: message.text, timestamp: Date.now() });
-      logger.debug(message.type);
-      logger.debug(room.messages[room.messages.length - 1].type);
+      room.messages.push({ author: message.author, itype: message.itype, text: message.text, timestamp: Date.now() });
       room.save(cb);
     });
   };
@@ -44,7 +43,7 @@ module.exports = function (mongoose) {
 
   exports.saveFileLink = function (roomName, message, cb) {
     cb = cb || function () {};
-    saveMessage.apply(this, [roomName, { author: message.author, itype: MessageTypes.file, text: message.text, timestamp: Date.now() }, cb]);
+    saveMessage.apply(this, [roomName, { author: message.author, itype: MessageTypes.file, text: message.text, timestamp: message.timestamp || Date.now() }, cb]);
   };
 
   /**

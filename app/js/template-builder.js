@@ -68,6 +68,18 @@
     '<a class="list-group-item" href="/room?name=%encodedName%">%name%</a>'
   ].join(''));
 
+  templates['fileUpload'] = buildTemplate([
+    '<span class="message"><span class="user" style="color: %color%">%author%</span>: ' +
+      '<span>Uploading %text% in progress: <span class="upload-process">%progress%</span> %</span>' +
+    '</span>'
+  ].join(''));
+
+  templates['fileWait'] = buildTemplate([
+    '<span class="message"><span class="user" style="color: %color%">%author%</span>: ' +
+      '<span>Wailting for %text% link: <span class="upload-process">%progress%</span> %</span>' + 
+    '</span>'
+  ].join(''));
+
   exports.templates = templates;
 
 }) (global || window);

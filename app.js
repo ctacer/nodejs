@@ -12,7 +12,6 @@ var logger = require(global.config.logger.dist)(module);
 global.routes = {};
 global.routes.navigation = require('./routes/navigation');
 global.routes.user = require('./routes/user');
-global.routes.room = require('./routes/room');
 
 global.modules = {};
 global.modules.http = require('http');
@@ -62,12 +61,6 @@ global.app.use(global.modules.passport.session());
   global.app.post('/user/login', global.routes.user.login);
   global.app.post('/user/register', global.routes.user.register);
   global.app.get('/user/logout', global.routes.user.logout);
-
-  // global.app.put('/room', global.routes.room.createRoom);
-
-  //dev routes
-  global.app.get('/test/room', global.routes.navigation.testRoom);
-  global.app.get('/remove/room', global.routes.navigation.removeRooms);
 
   //listen to not registered routes and redirects to home page
   global.app.all('*', function (req, res) {

@@ -42,6 +42,10 @@ ChatRooms.prototype.emit = function (socket, args, socketWrapper) {
   }
 };
 
+ChatRooms.prototype.emitSocket = function (socket, args, socketWrapper) {
+  socketWrapper && typeof socketWrapper == 'function' ? socketWrapper(socket, args) : socket.emit.apply(socket, args);
+};
+
 /**
  * function adds user to chat room
  */
@@ -70,18 +74,14 @@ ChatRooms.prototype.disconnect = function (socket) {
  * function saves new message to the room model at db
  */
 ChatRooms.prototype.saveMessage = function (socket, messageData) {
-  global.modules.db.room.saveMessage(socket.roomName, messageData, function () {
-    // logger.debug('saveMessage');
-  });
+  global.modules.db.room.saveMessage(socket.roomName, messageData, function () { });
 };
 
 /**
  * function saves link to sent files as a message
  */
 ChatRooms.prototype.saveFileLink = function (socket, messageData) {
-  global.modules.db.room.saveFileLink(socket.roomName, messageData, function () {
-    // logger.debug('saveMessage');
-  });
+  global.modules.db.room.saveFileLink(socket.roomName, messageData, function () { });
 };
 
 /**
@@ -163,7 +163,7 @@ module.exports = function (server) {
             callback(null, { ok: false, error: new Error('room ' + roomName + 'already exists') });
           }
           else {
-            global.modules.db.room.save({ name: roomName }, function (error) {
+            global.modules.db.room.save({ name: roomName, timestamp: Date.now(), owner: data.owner }, function (error) {
               callback(null, { ok: !error, error: error });
             });
           }
@@ -190,26 +190,50 @@ module.exports = function (server) {
     });
 
     /**
-     * experimental file streaming
+     * listener for file stream:
+     * whenever user starts uploading a file, listener will capture event, creates path on server, creates file and starts write steaming
+     * that server listens to write ticker to send progress to uploader and other room members
+     * when file is fully uploaded similat events with flag `done` will be sent to all room members, so they can have link to the file
      */
     ss(socket).on('file', function(stream, data) {
       var filename = path.basename(data.name);
-      var writer = fs.createWriteStream(global.__dirname + '/upload/' + filename);
-      stream.pipe(writer);
       var size = 0;
+      var timeCreation = Date.now();
+      var writer;
+
+      createPath(global.__dirname + '/upload/' + socket.userName);
+
+      writer = fs.createWriteStream(global.__dirname + '/upload/' + socket.userName + '/' + filename);
+      stream.pipe(writer);      
 
       stream.on && stream.on('data', function (chunk) {
         size += chunk.length;
         var progress = Math.floor(size / data.size * 100);
-        chatRooms.emit(socket, ['newfileprogress', { user: socket.userName, filename: filename, progress: progress }]);
+
+        var message = { author: socket.userName, text: filename, progress: progress };
+
+        chatRooms.emit(socket, ['newfileprogress', message ]);
+        chatRooms.emitSocket(socket, ['fileuploadprogress', message ]);
       });
 
       writer.on('finish', function() {
-        logger.info('all writes are now complete.');
-        chatRooms.emit(socket, ['newfilelink', { user: socket.userName, filename: filename, link: '/upload/' + filename }]);
-        chatRooms.saveFileLink(socket, { author: socket.userName, text: filename });
+        var message = { done: true, author: socket.userName, text: filename, link: '/upload/' + stream.userName + '/' + filename };
+
+        chatRooms.emit(socket, ['newfileprogress', message ]);
+        chatRooms.emitSocket(socket, ['fileuploadprogress', message ]);
+        chatRooms.saveFileLink(socket, { author: socket.userName, text: filename, timestamp: timeCreation });
       });
     });
+
+    /**
+     * function check if path exists and if do not - creates
+     */
+    function createPath (path) {
+      var exists = fs.existsSync(path);
+      if (!exists) {
+        fs.mkdirSync(path);
+      }
+    }
     
   });
 

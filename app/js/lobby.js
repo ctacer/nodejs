@@ -11,12 +11,17 @@ $(function () {
     var list = $('#room-list');
 
     list.empty();
-    newList.forEach(function (item) {
-      list.append(global.templates.roomItem({
-        name: item.name,
-        encodedName: encodeURIComponent(item.name)
-      }));
-    });
+
+    newList
+      .sort(function (f, s) {
+        return f.timestamp - s.timestamp;
+      })
+      .forEach(function (item) {
+        list.append(global.templates.roomItem({
+          name: item.name,
+          encodedName: encodeURIComponent(item.name)
+        }));
+      });
   };
 
   /**
@@ -28,24 +33,9 @@ $(function () {
     customEvent.field.val('');
 
     socket.emit('room', {
-      roomName: roomName
+      roomName: roomName,
+      owner: global.user.login
     });
-
-    /*var promise = $.ajax({
-      url: '/room',
-      type: 'PUT',
-      data: { 'roomName' : roomName }
-    });
-
-    promise
-      .success(function (result) {
-        console.log(result);
-        lobby.rebuildRoomList(result.data);
-      })
-      .error(function (error) {
-        console.error(error);
-        //show error message
-      });*/
   });
 
   socket.on('room', function (result) {

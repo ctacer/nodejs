@@ -14,18 +14,12 @@ block content
           input#message-file(type='file')
     .panel.panel-default
       #message-container.panel-body.chat-body
-        - for (var i = 0; i < messages.length; i++) {
-          span.message
-            span.user(style='color: #0A6')= messages[i].author
-            = ': ' + messages[i].text
-        - }
-  a#room-file-link(hidden, download=​"new file.txt")
 block scripts
   script(type='text/javascript').
     global.room = !{JSON.stringify(room)};
   script(src="bower-components/socket.io-client/socket.io.js")
   script(src="external/socket.io-stream/socket.io-stream.js")
   script(src="js/color-helper.js")
-  script(src="js/file-manager.js")
+  script(src="js/message-observer.js")
   script(src="js/input-submiter.js")
   script(src="js/room.js")
