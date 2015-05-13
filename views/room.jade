@@ -1,19 +1,23 @@
 extends ./index.jade
 
+block video-chat
+  li
+    a#video-chat-btn(onclick="startVideoSharing();return false;") Share Video
 block content
   .block-panel
-    h2.block-panel-heading= room.name
-    .row.message-input
-      .col-lg-12
-        .input-group
-          span.input-group-btn
-            button#create-message.btn.btn-default(type='button') Send
-          input#message-text.form-control(type='text')
-        #message-file-container.input-group
-          .drop-zone
-          input#message-file(type='file')
-    .panel.panel-default
+    h2.block-panel-heading= room.name    
+    .panel.panel-default.no-border
       #message-container.panel-body.chat-body
+block footer
+  .message-input
+    .col-lg-12
+      .input-group
+        span.input-group-btn
+          button#create-message.btn.btn-default(type='button') Send
+        input#message-text.form-control(type='text')
+      #message-file-container.input-group(style='border-width: 0px;')
+        .drop-zone
+        input.btn.btn-primary#message-file(type='file')
 block scripts
   script(type='text/javascript').
     global.room = !{JSON.stringify(room)};

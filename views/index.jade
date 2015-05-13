@@ -25,16 +25,21 @@ html
   body
     if user && user.login
       header#top-header
-        .header-left-container
-          span
-            a(href="/lobby") lobby
-        .header-right-container
-          span= user.login
-          span
-            a(href="/user/logout") sign out
-        .clear
+        nav.collapse.navbar-collapse.bs-navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href="/lobby") lobby
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(onclick="return false;")= user.login
+            li
+              a(href="/user/logout") sign out
+            block video-chat
+        .clear        
     .main-container
       block content
+    footer
+      block footer
 
     script(src="bower-components/jquery/dist/jquery.min.js")
     script(src="bower-components/bootstrap/dist/js/bootstrap.min.js")

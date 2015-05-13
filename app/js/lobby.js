@@ -1,11 +1,10 @@
 
-
 $(function () {
   
   "use strict";
 
   var lobby = {};
-  var socket = io('http://localhost');
+  var socket = io('http://localhost:8000');
 
   lobby.rebuildRoomList = function (newList) {
     var list = $('#room-list');

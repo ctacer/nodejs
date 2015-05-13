@@ -1,11 +1,14 @@
 
+function startVideoSharing () {
+  alert("Video Sharing;");
+}
 
 $(function () {
 
   "use strict";
 
   var room = {};
-  var socket = io('http://localhost');
+  var socket = io('http://localhost:8000');
 
   var MessageTypes = {
     plain: 'plain/text',

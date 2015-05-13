@@ -8,9 +8,9 @@ body {
 #top-header {
   position: relative;
   margin: auto;
-  max-width: 600px;
-  padding: 15px;
-  padding-top: 5px;
+  padding: 0px 15px;
+  box-shadow: 0px 4px 9px 5px rgba(0,0,0,0.2);
+  z-index: 100;
 }
 
 #top-header>.header-left-container {
@@ -32,15 +32,30 @@ body {
 }
 
 .main-container {
-  padding: 30px;
+  padding: 0px;
+  position: fixed;
+  top: 40px;
+  bottom: 66px;
+  left: 0px;
+  right: 0px;
+  overflow: auto;
+}
+.block-panel .block-panel-heading {
+  background: #428bca;
+  color: #fff;
+  padding: 15px;
+  margin: 0px;
+  /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);  */
+}
+.no-border {
+  border-width: 0px;
 }
 
 .block-panel {
   margin: auto;
-  max-width: 600px;
-  padding: 15px;
+  /* max-width: 600px;
+  padding: 15px; */
 }
-.block-panel .block-panel-heading,
 .block-panel .checkbox,
 .block-panel .message-input
  {
@@ -63,13 +78,11 @@ body {
 }
 .block-panel input[type="text"] {
   margin-bottom: -1px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+  border-radius: 0;
 }
 .block-panel input[type="password"] {
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  border-radius: 0;
 }
 
 .chat-body .message, .chat-body .file-message {
@@ -89,7 +102,85 @@ body {
   border-top-right-radius: 0px;
 }
 
-#message-file {
-  margin-top: 15px;
-  padding: 5px;
+footer {
+  position: fixed;
+  bottom: 0px;
+  box-shadow: 0px -4px 9px 5px rgba(0,0,0,0.2);
 }
+button {
+  border-radius: 0px !important;
+}
+
+#message-text, #create-message {
+  border-radius: 0px;
+}
+
+.message-input>.col-lg-12, .row-b>.col-lg-12 {
+  padding: 0px;
+}
+
+#message-file {
+  padding: 5px;
+  width: 100%;
+  border-radius: 0px;
+  text-align: center;
+}
+#video-chat-button {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+
+input[type=file] {
+  position: relative;
+  -webkit-appearance: textfield;
+  -webkit-box-sizing: border-box;
+}
+ 
+input[type=file]::-webkit-file-upload-button {
+  border: none;
+  margin: 0;
+  padding: 0;
+  -webkit-appearance: none;
+  width: 0;
+}
+
+.navbar-nav>li>a {
+  background: #428bca;
+  color: #fff;
+  padding: 10px;
+}
+.nav>li>a:hover, .nav>li>a:focus {
+  background-color: #428bca;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+ 
+/* "x::-webkit-file-upload-button" forces the rules to only apply to browsers that support this pseudo-element
+x::-webkit-file-upload-button, input[type=file]:after {
+  content: 'Browse...';
+  display: inline-block;
+  background-color: transparent;
+  left: 0%;
+  right: 0%;
+  margin-left:3px;
+  padding: 3px 8px 2px;
+  position: relative;
+  -webkit-appearance: button;
+} */
+
+::-webkit-scrollbar {/* 1 */
+    width: 12px;
+}
+::-webkit-scrollbar-button { /* 2 */ }
+::-webkit-scrollbar-track {/* 3 */
+    -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3); 
+}
+::-webkit-scrollbar-track-piece { /* 4 */ }
+::-webkit-scrollbar-thumb {/* 5 */
+    background-color: #428bca;
+    -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.3); 
+}
+::-webkit-scrollbar-corner { /* 6 */ }
+::-webkit-resizer { /* 7 */ }

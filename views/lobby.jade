@@ -2,12 +2,13 @@ extends ./index.jade
 
 block content
   .block-panel
-    .row
+    .row-b
       .col-lg-12
         .input-group
           span.input-group-btn
-            button#create-room.btn.btn-default(type='button') Create room
+            button#create-room.btn.btn-primary(type='button') Create room
           input#room-name.form-control(type='text')
+      div(style='clear: both;')
     h1 Available rooms
     #room-list.list-group
       - for (var i = 0; i < rooms.length; i ++) {
