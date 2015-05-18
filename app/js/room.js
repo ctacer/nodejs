@@ -1,6 +1,19 @@
 
+navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+
+
+function gotStream(stream) {
+   document.querySelector('video').src = URL.createObjectURL(stream);
+}
+
+function streamError(error) {
+   console.log(error);
+}
+
+
 function startVideoSharing () {
-  alert("Video Sharing;");
+  $('#video-modal').modal('show');
+  navigator.getUserMedia({ audio: true, video: true }, gotStream, streamError);
 }
 
 $(function () {
