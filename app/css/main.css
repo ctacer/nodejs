@@ -1,4 +1,5 @@
-body {
+body, body .panel {
+  background-color: #eee;
 }
 
 .clear {
@@ -11,6 +12,7 @@ body {
   padding: 0px 15px;
   box-shadow: 0px 4px 9px 5px rgba(0,0,0,0.2);
   z-index: 100;
+  background-color: #dedede;
 }
 
 #top-header>.header-left-container {
@@ -35,10 +37,13 @@ body {
   padding: 0px;
   position: fixed;
   top: 40px;
-  bottom: 66px;
+  bottom: 0px;
   left: 0px;
   right: 0px;
   overflow: auto;
+}
+.main-container>.row {
+  margin: 0px;
 }
 .block-panel .block-panel-heading {
   background: #428bca;
@@ -85,6 +90,17 @@ body {
   border-radius: 0;
 }
 
+.chat-body {
+  outline: none;
+  border: solid 1px #BBB;
+  font-size: 15px;
+  margin-top: 10px;
+  height: 150px;
+  background-color: #fff;
+  margin-bottom: 10px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
 .chat-body .message, .chat-body .file-message {
   display: block;
   font-size: 1.2em;
@@ -171,24 +187,32 @@ body .modal-body {
 }
 video {
   position: relative;
-  width: 49%;
   background: #000;
 }
-video+video {
-  left: 2%;
+@media screen and (min-width:768px) {
+
+  .remote{  
+    width: 85%; 
+  }
+
+  .local{ 
+    margin-top: 0px;
+  }
+
+  #remoteimg{
+    border: solid 1px;
+    width: 85%;  
+  }
+  
+  .jumbotron{
+    margin-top: -45px;
+  } 
 }
-/* "x::-webkit-file-upload-button" forces the rules to only apply to browsers that support this pseudo-element
-x::-webkit-file-upload-button, input[type=file]:after {
-  content: 'Browse...';
-  display: inline-block;
-  background-color: transparent;
-  left: 0%;
-  right: 0%;
-  margin-left:3px;
-  padding: 3px 8px 2px;
-  position: relative;
-  -webkit-appearance: button;
-} */
+.img-responsive {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
 ::-webkit-scrollbar {/* 1 */
     width: 12px;

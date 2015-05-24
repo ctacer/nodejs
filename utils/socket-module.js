@@ -59,6 +59,11 @@ ChatRooms.prototype.connect = function (connectionData, socket) {
   this.privates.rooms[connectionData.room].push(socket);
 };
 
+ChatRooms.prototype.getMembersCount = function (socket) {
+  if (!this.privates.rooms[socket.roomName]) return 0;
+  return this.privates.rooms[socket.roomName].length;
+};
+
 /**
  * function removes socket from its chat room
  */
@@ -112,6 +117,14 @@ module.exports = function (server) {
       chatRooms.saveMessage(socket, data.message);
     });
 
+    socket.on('message', function (data) {
+      chatRooms.emit(socket, ['message', data]);
+    });
+
+    socket.on('initiateCall', function (data) {
+      chatRooms.emit(socket, ['watingForAnswer', data]);
+    });
+
     /**
      * listener will register new user, collect all history for selected room
      * and sends to all room's users 'new user connected' message, and history data to connceted user
@@ -119,7 +132,8 @@ module.exports = function (server) {
     socket.on('newuser', function (connectionData) {
       chatRooms.connect(connectionData, socket);
 
-      chatRooms.emit(socket, ['userconnected', { user: socket.userName }]);
+      chatRooms.emitSocket(socket, ['roomMembers', { membersCount: chatRooms.getMembersCount(socket) }]);
+      chatRooms.emit(socket, ['userconnected', { user: socket.userName, membersCount: chatRooms.getMembersCount(socket) }]);
       chatRooms.getHistory(socket, function (history) {
         socket.emit('history', history);
       });
@@ -131,7 +145,7 @@ module.exports = function (server) {
      * and removes user from chat room instance
      */
     socket.on('disconnect', function () {
-      chatRooms.emit(socket, ['userdisconnected', { user: socket.userName }]);
+      chatRooms.emit(socket, ['userdisconnected', { user: socket.userName, membersCount: chatRooms.getMembersCount(socket) }]);
       chatRooms.disconnect(socket);
     });
 

@@ -2,25 +2,41 @@ extends ./index.jade
 
 block video-chat
   li
-    a#video-chat-btn Share Video
+    span#video-chat-notification(style="display: none;") waiting for answer...
+  li
+    a#video-chat-btn Video call
+  li
+    a#answer-call-btn(style="display: none;") Answer call
+  li
+    a#terminame-call-btn(style="display: none;") Terminate call
+  li
+    a#decline-call-btn(style="display: none;") Decline call
 block content
   .block-panel
     h2.block-panel-heading= room.name
-    .panel.panel-default.no-border#video-chat-content(style="display: none;")
-      video#me(autoplay)
-      video#candidate(autoplay)
-    .panel.panel-default.no-border
-      #message-container.panel-body.chat-body
-block footer
-  .message-input
-    .col-lg-12
-      .input-group
-        span.input-group-btn
-          button#create-message.btn.btn-default(type='button') Send
-        input#message-text.form-control(type='text')
-      #message-file-container.input-group(style='border-width: 0px;')
-        .drop-zone
-        input.btn.btn-primary#message-file(type='file')
+  br
+  .container
+    .row
+      .col-md-8
+        .row
+          img#remoteimg.img-responsive(src="/imgs/remote.png")
+          video#candidate(autoplay, style="min-width: 85%;display: none;")
+      .col-md-4
+        .row
+          img#localimg.img-responsive(src="/imgs/local.png")
+          video#me(autoplay, width="100%", style="display: none;")
+        .row
+          .panel.panel-default.no-border
+            #message-container.panel-body.chat-body
+        .row
+          .input-group
+            span.input-group-btn
+              button#create-message.btn.btn-default(type='button') Send
+            input#message-text.form-control(type='text')
+        .row
+          #message-file-container.input-group(style='border-width: 0px;')
+            .drop-zone
+            input.btn.btn-primary#message-file(type='file')
 block scripts
   script(type='text/javascript').
     global.room = !{JSON.stringify(room)};

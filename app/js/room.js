@@ -1,27 +1,18 @@
-
-navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-
-
-function gotStream(stream) {
-   document.querySelector('video').src = URL.createObjectURL(stream);
-}
-
-function streamError(error) {
-   console.log(error);
-}
-
-
-function startVideoSharing () {
-  $('#video-modal').modal('show');
-  navigator.getUserMedia({ audio: true, video: true }, gotStream, streamError);
-}
-
 $(function () {
 
   "use strict";
 
   var room = {};
   var socket = io('http://localhost:8000');
+
+  var checkVideoSharing = function (roomMembers) {
+/*    if (roomMembers == 2) {
+      $('#video-chat-btn').show();
+    }
+    else {
+      $('#video-chat-btn').hide();
+    }*/
+  };
 
   var MessageTypes = {
     plain: 'plain/text',
@@ -136,7 +127,12 @@ $(function () {
    * listeners for socket events
    */
   socket.on('connect', function (data) {
+    // checkVideoSharing(data.membersCount);
     socket.emit('newuser', { name: global.user.login, room: global.room.name });
+  });
+
+  socket.on('roomMembers', function (data) {
+    checkVideoSharing(data.membersCount);
   });
 
   socket.on('newmessage', function (data) {
@@ -144,10 +140,12 @@ $(function () {
   });
 
   socket.on('userdisconnected', function (data) {
+    checkVideoSharing(data.membersCount);
     // room.addMessage({ author: 'admin', text: 'user ' + data.user + ' just left chat room' });
   });
 
   socket.on('userconnected', function (data) {
+    checkVideoSharing(data.membersCount);
     // room.addMessage({ author: 'admin', text: 'user ' + data.user + ' just joined chat room' });
   });
 
